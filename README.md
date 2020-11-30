@@ -1,8 +1,6 @@
 # netpalm-public
 Public example deployment of Netpalm
 
-# NOTE: This document outlines the PLAN.  Much is till to be completed
-
 ## Requirements:
 
 * Packer and Terraform both expect an AWS CLI Profile named `netpalm-public`
@@ -34,3 +32,11 @@ Public example deployment of Netpalm
         * Subnets
         * VPCs
         * etc.
+
+
+# TODO: 
+ * Fix formatting on this, probaly
+ * get tbot & wg keys added to 'accepted keys' for the default user
+ * actually deploy netpalm 
+ * *secure* the netpalm deployment
+ * make netpalm reachable by editing security group
