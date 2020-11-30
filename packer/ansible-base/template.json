@@ -1,0 +1,47 @@
+{
+    "variables": {
+        "region": "ap-southeast-2",
+        "ssh_username": "ubuntu",
+        "instance_type": "t2.micro",
+        "aws_profile_name": "netpalm-public",
+        "subnet_id": "" 
+      },
+      "builders": [
+        {
+          "type": "amazon-ebs",
+          "profile": "{{ user `aws_profile_name` }}",
+          "region": "{{ user `region` }}",
+          "subnet_id": "{{ user `subnet_id` }}",
+          "source_ami_filter": {
+            "filters": {
+              "name": "ubuntu/images/hvm-ssd/ubuntu-focal-*-amd64-server-*",
+              "virtualization-type": "hvm"
+            },
+            "owners": ["099720109477"],
+            "most_recent": true
+          },
+          "instance_type": "{{user `instance_type` }}",
+          "ssh_username": "{{user `ssh_username`}}",
+          "ami_name": "packer-base-{{timestamp}}",
+          "associate_public_ip_address": true,
+          "tags": {
+            "Name": "Packer-Ansible" 
+          }
+        }
+      ],
+      "provisioners": [
+        {
+          "type": "shell",
+          "script": "scripts/ansible.sh",
+          "execute_command": "chmod +x {{ .Path }}; sudo bash {{ .Path }}"
+        },
+        {
+          "type": "ansible-local",
+          "playbook_file": "ansible/playbook.yml",
+          "group_vars": "ansible/group_vars",
+          "role_paths": [
+            "ansible/roles/testrole"
+          ]
+        }
+      ]
+}

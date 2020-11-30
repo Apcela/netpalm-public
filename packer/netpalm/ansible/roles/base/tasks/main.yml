@@ -1,0 +1,35 @@
+---
+
+- name: import user tasks
+  import_tasks: user.yml
+
+- name: Wait for any possibly running unattended upgrade to finish
+  raw: systemd-run --property="After=apt-daily.service apt-daily-upgrade.service" --wait /bin/true
+
+- name: APT LISTS - wait for the lock to be released
+  raw: 'sudo lslocks -uo path | grep -E "^(PATH|/var/lib/apt/lists/lock)$"'
+  register: result
+  until: result.stdout|trim == "PATH"
+  retries: 100
+  delay: 5
+
+- name: DPKG - wait for the lock to be released
+  raw: 'sudo lslocks -uo path | grep -E "^(PATH|/var/lib/dpkg/lock|/var/lib/dpkg/lock-frontend)$"'
+  register: result
+  until: result.stdout|trim == "PATH"
+  retries: 300
+  delay: 5
+
+
+- name: update apt, install packages
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name: 
+      - "build-essential"
+      - "zlib1g-dev"
+      - "libssl-dev"
+      # - "python-is-python3"
+      - "python3-pip"
+      
+    state: present

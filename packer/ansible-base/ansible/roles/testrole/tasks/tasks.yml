@@ -1,0 +1,6 @@
+---
+
+- name: change hostname
+  hostname: 
+    name: "ansibletest01"
+    use: debian
