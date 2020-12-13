@@ -1,7 +1,23 @@
 resource "aws_security_group" "netpalm" {
     name = "netpalm"
-    description = "Security group for netpalm"
+    description = "Security group for netpalm ec2"
     vpc_id = aws_vpc.this.id
+
+    ingress {
+        description = "HTTP from Everywhere"
+        from_port = 80
+        to_port = 80
+        protocol = "tcp"
+        cidr_blocks = ["10.0.0.0/8"]  
+    }
+
+    ingress {
+        description = "HTTP from Everywhere"
+        from_port = 9000
+        to_port = 9000
+        protocol = "tcp"
+        cidr_blocks = ["10.0.0.0/8"]  
+    }
 
     ingress {
         description = "SSH from Everywhere"
@@ -63,19 +79,20 @@ resource "aws_instance" "netpalm" {
 
     key_name = "wgkp"
 
+    user_data = file("${path.module}/files/cloud-init.sh")
+
     tags = var.common_tags
 }
 
-data "aws_route53_zone" "netpalm" {
-    name = "netpalm.apcela.net"
-}
 
-resource "aws_route53_record" "netpalm" {
+
+resource "aws_route53_record" "netpalm-mgmt" {
     zone_id = data.aws_route53_zone.netpalm.zone_id
-    name = "public.${data.aws_route53_zone.netpalm.name}"
+    name = "public-mgmt.${data.aws_route53_zone.netpalm.name}"
     type = "A"
     ttl = "300"
     records = [
         aws_instance.netpalm.public_ip
     ]
 }
+
