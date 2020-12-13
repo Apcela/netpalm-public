@@ -1,0 +1,14 @@
+---
+
+- name: make deploy directory
+  file:
+    path: /app 
+    state: directory
+    mode: '0755'
+
+- name: pull git repo
+  git:
+    repo: https://github.com/tbotnz/netpalm.git
+    dest: /app/
+    version: '0.1.7'
+

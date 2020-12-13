@@ -42,7 +42,8 @@
             "group_vars": "ansible/group_vars",
             "role_paths": [
                 "ansible/roles/base",
-                "ansible/roles/docker"
+                "ansible/roles/docker",
+                "ansible/roles/netpalm"
             ],
             "extra_arguments": ["-vvvv"]
         }
