@@ -36,7 +36,7 @@ Public example deployment of Netpalm
 
 # TODO: 
  * Fix formatting on this, probaly
- * get tbot & wg keys added to 'accepted keys' for the default user
- * actually deploy netpalm 
- * *secure* the netpalm deployment
- * make netpalm reachable by editing security group
+ * get tbot & ~wg~ keys added to 'accepted keys' for the default user
+ * ~actually deploy netpalm~
+ * ~*secure* the netpalm deployment~ (only permits API DOCS access for now)
+ * ~make netpalm reachable by editing security group~
