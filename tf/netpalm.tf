@@ -65,3 +65,17 @@ resource "aws_instance" "netpalm" {
 
     tags = var.common_tags
 }
+
+data "aws_route53_zone" "netpalm" {
+    name = "netpalm.apcela.net"
+}
+
+resource "aws_route53_record" "netpalm" {
+    zone_id = data.aws_route53_zone.netpalm.zone_id
+    name = "public.${data.aws_route53_zone.netpalm.name}"
+    type = "A"
+    ttl = "300"
+    records = [
+        aws_instance.netpalm.public_ip
+    ]
+}
