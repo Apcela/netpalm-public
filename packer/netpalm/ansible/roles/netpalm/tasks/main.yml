@@ -10,5 +10,5 @@
   git:
     repo: https://github.com/tbotnz/netpalm.git
     dest: /app/
-    version: '0.1.7'
-
+    version: 'v0.1.7'
+    update: yes

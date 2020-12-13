@@ -27,9 +27,11 @@
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ubuntu_version.stdout }} stable"
     state: present
 
-- name: Update apt and install docker-ce
+- name: Update apt and install docker-ce & docker-compose
   apt: 
-    name: docker-ce
+    name: 
+      - docker-ce
+      - docker-compose
     update_cache: yes
     state: latest
 
