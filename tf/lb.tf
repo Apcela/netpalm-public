@@ -1,12 +1,20 @@
-resource "aws_security_group" "elb" {
-    name = "netpalm-elb"
-    description = "Security group for netpalm elb"
+resource "aws_security_group" "alb" {
+    name = "netpalm-alb"
+    description = "Security group for netpalm alb"
     vpc_id = aws_vpc.this.id
 
     ingress {
         description = "HTTP from Everywhere"
         from_port = 80
         to_port = 80
+        protocol = "tcp"
+        cidr_blocks = ["0.0.0.0/0"]  
+    }
+
+    ingress {
+        description = "HTTPS from Everywhere"
+        from_port = 443
+        to_port = 443
         protocol = "tcp"
         cidr_blocks = ["0.0.0.0/0"]  
     }
@@ -25,6 +33,10 @@ resource "aws_security_group" "elb" {
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
     }
+}
+
+data "aws_acm_certificate" "netpalm" {
+    domain = "public.netpalm.apcela.net"
 }
 
 resource "aws_lb_target_group" "netpalm" {
@@ -48,7 +60,7 @@ resource "aws_lb" "netpalm" {
         aws_subnet.this_public2.id
     ]
     security_groups = [
-        aws_security_group.elb.id
+        aws_security_group.alb.id
     ]
     internal = false
 }
@@ -60,6 +72,31 @@ resource "aws_lb_listener" "netpalm" {
     protocol = "HTTP"
 
     default_action {
+        # type = "fixed-response"
+        # fixed_response {
+        #     content_type = "text/plain"
+        #     status_code = 403
+        #     message_body = "NOPE"
+        # }
+        type = "redirect"
+        redirect {
+            port = 443
+            protocol = "HTTPS"
+            status_code = "HTTP_301"
+        }
+    }
+}
+
+resource "aws_lb_listener" "netpalm-HTTPS" {
+    load_balancer_arn = aws_lb.netpalm.arn 
+
+    port = 443
+    protocol = "HTTPS"
+
+    ssl_policy        = "ELBSecurityPolicy-2016-08"
+    certificate_arn = data.aws_acm_certificate.netpalm.arn
+
+    default_action {
         type = "fixed-response"
         fixed_response {
             content_type = "text/plain"
@@ -69,8 +106,8 @@ resource "aws_lb_listener" "netpalm" {
     }
 }
 
-resource "aws_lb_listener_rule" "netpalm" {
-    listener_arn = aws_lb_listener.netpalm.arn
+resource "aws_lb_listener_rule" "netpalm-HTTPS" {
+    listener_arn = aws_lb_listener.netpalm-HTTPS.arn
     
     action {
         type = "forward"
