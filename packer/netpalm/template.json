@@ -37,6 +37,11 @@
     ],
     "provisioners": [
         {
+          "type": "shell",
+          "script": "scripts/install-collection.sh",
+          "execute_command": "chmod +x {{ .Path }}; sudo bash {{ .Path }}"
+        },
+        {
             "type": "ansible-local",
             "playbook_file": "ansible/playbook.yml",
             "group_vars": "ansible/group_vars",

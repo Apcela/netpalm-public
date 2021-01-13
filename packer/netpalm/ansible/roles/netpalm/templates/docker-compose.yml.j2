@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+
+    netpalm-controller:
+      image: apcela/netpalm-controller:{{ controller_version }}
+      environment:
+          - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+          - NETPALM_CONFIG=/code/config/config.json
+          - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      ports:
+          - "9000:9000"
+      networks:
+          - "netpalm-network"
+      depends_on:
+          - redis
+      restart: always
+
+    netpalm-worker-pinned:
+      image: apcela/netpalm-worker:{{ worker_version }}
+      environment:
+        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        - NETPALM_CONFIG=/code/config/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      depends_on:
+        - redis
+      networks:
+      - "netpalm-network"
+      restart: always
+
+    netpalm-worker-fifo:
+      image: apcela/netpalm-worker:{{ worker_version }}
+      environment:
+        - NET_TEXTFSM=/usr/local/lib/python3.8/site-packages/ntc_templates/templates/
+        - NETPALM_CONFIG=/code/config/config.json
+        - NETPALM_LOG_CONFIG_FILENAME=/code/config/log-config.yml
+      depends_on:
+        - redis
+      networks:
+      - "netpalm-network"
+      restart: always
+
+    redis:
+      image: apcela/netpalm-redis:{{ redis_version }}
+      networks:
+      - "netpalm-network"
+      restart: always
+
+networks:
+
+  netpalm-network:
+    name: "netpalm-network"

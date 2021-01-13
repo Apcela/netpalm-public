@@ -1,0 +1,4 @@
+---
+controller_version: "0.1.8"
+worker_version: "0.1.8"
+redis_version: "0.1.8"

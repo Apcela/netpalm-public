@@ -6,9 +6,12 @@
     state: directory
     mode: '0755'
 
-- name: pull git repo
-  git:
-    repo: https://github.com/tbotnz/netpalm.git
-    dest: /app/
-    version: 'v0.1.7'
-    update: yes
+- name: docker-compose.yml file
+  template:
+    src: docker-compose.yml.j2
+    dest: /app/docker-compose.yml
+
+# - name: docker-compose up
+#   community.general.docker_compose:
+#     project_src: /app
+
